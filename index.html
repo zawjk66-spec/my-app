@@ -1,38 +1,83 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تطبيقي</title>
-
-<style>
-body{
-  font-family: Arial;
-  background:#f2f2f2;
-  margin:0;
-  padding:20px;
-}
-.card{
-  background:white;
-  padding:20px;
-  border-radius:12px;
-  text-align:center;
-}
-button{
-  padding:10px 20px;
-  background:#2196f3;
-  color:white;
-  border:none;
-  border-radius:8px;
-}
-</style>
+  <meta charset="UTF-8">
+  <title>دردشة خاصة</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+    .chat {
+      max-width: 400px;
+      margin: 20px auto;
+      background: white;
+      border-radius: 10px;
+      padding: 10px;
+    }
+    #messages {
+      height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 5px;
+      margin-bottom: 10px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+  </style>
 </head>
-
 <body>
-<div class="card">
-<h2>مرحبا هذا تطبيقي</h2>
-<p>التطبيق يخدم من المتصفح</p>
-<button onclick="alert('خدام 👍')">اضغط هنا</button>
+
+<div class="chat">
+  <h3>💬 دردشة خاصة</h3>
+  <input id="name" placeholder="اسمك">
+  <div id="messages"></div>
+  <input id="msg" placeholder="اكتب رسالة">
+  <button onclick="send()">إرسال</button>
 </div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+  var firebaseConfig = {
+    apiKey: "AIzaSyExample",
+    authDomain: "example.firebaseapp.com",
+    databaseURL: "https://example.firebaseio.com",
+    projectId: "example",
+  };
+  firebase.initializeApp(firebaseConfig);
+
+  var db = firebase.database().ref("chat");
+
+  function send() {
+    var name = document.getElementById("name").value;
+    var msg = document.getElementById("msg").value;
+    if(name && msg){
+      db.push({name, msg});
+      document.getElementById("msg").value = "";
+    }
+  }
+
+  db.on("child_added", function(data){
+    var m = data.val();
+    var div = document.createElement("div");
+    div.textContent = m.name + ": " + m.msg;
+    document.getElementById("messages").appendChild(div);
+  });
+</script>
+
 </body>
 </html>
