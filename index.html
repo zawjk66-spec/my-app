@@ -1,84 +1,149 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Study Way - Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Way</title>
 
-  <link rel="manifest" href="manifest.json">
+<link rel="manifest" href="manifest.json">
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #1a1a1a, #000);
-      color: #ffd700;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
+<style>
+:root{
+  --bg:#0d1b2a;
+  --card:#1b263b;
+  --text:#ffffff;
+  --btn:#d4af37; /* ذهبي */
+}
+body{
+  margin:0;
+  font-family:Arial;
+  background:var(--bg);
+  color:var(--text);
+  direction:rtl;
+}
 
-    .box {
-      background: #111;
-      padding: 22px;
-      border-radius: 12px;
-      width: 100%;
-      max-width: 320px;
-      text-align: center;
-      border: 2px solid #ffd700;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-    }
+.container{
+  max-width:420px;
+  margin:auto;
+  padding:20px;
+}
 
-    h2 {
-      margin-bottom: 15px;
-      color: #ffd700;
-    }
+.card{
+  background:var(--card);
+  padding:15px;
+  border-radius:12px;
+  margin-top:15px;
+}
 
-    input {
-      width: 100%;
-      padding: 11px;
-      margin: 8px 0;
-      border-radius: 6px;
-      border: 1px solid #ffd700;
-      background: #000;
-      color: #ffd700;
-      outline: none;
-    }
+input, textarea{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border-radius:8px;
+  border:none;
+}
 
-    input::placeholder {
-      color: #c9b037;
-    }
+button{
+  background:var(--btn);
+  color:black;
+  border:none;
+  padding:10px;
+  border-radius:8px;
+  margin-top:12px;
+  width:100%;
+  cursor:pointer;
+}
 
-    button {
-      width: 100%;
-      padding: 11px;
-      background: linear-gradient(135deg, #ffd700, #c9a300);
-      color: #000;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      font-weight: bold;
-      margin-top: 10px;
-    }
-
-    button:hover {
-      opacity: 0.9;
-    }
-
-    .hidden {
-      display: none;
-    }
-  </style>
+.hidden{display:none}
+</style>
 </head>
+
 <body>
 
-  <!-- تسجيل الدخول -->
-  <div class="box" id="loginBox">
-    <h2>✨ تسجيل الدخول ✨</h2>
-    <input type="text" id="username" placeholder="اسم المستخدم">
-    <input type="password" id="password" placeholder="كلمة المرور">
+<!-- 🔐 تسجيل الدخول -->
+<div class="container" id="loginBox">
+  <div class="card">
+    <h3>🔐 تسجيل الدخول</h3>
+    <input id="user" placeholder="الرقم">
+    <input id="pass" type="password" placeholder="كلمة السر">
     <button onclick="login()">دخول</button>
   </div>
+</div>
 
-  <!-- الصفحة الرئيسية -->
+<!-- 📘 التطبيق -->
+<div class="container hidden" id="app">
+
+  <div class="card">
+    <h2>Study Way</h2>
+    <button onclick="logout()">🚪 خروج</button>
+  </div>
+
+  <div class="card">
+    <h3>✍️ إضافة ملخص</h3>
+    <input id="subject" placeholder="المادة">
+    <input id="title" placeholder="العنوان">
+    <textarea id="content" placeholder="اكتب الملخص"></textarea>
+    <button onclick="add()">حفظ</button>
+  </div>
+
+  <div id="list"></div>
+</div>
+
+<script>
+/* 🔐 حساب ثابت */
+const USER="1234";
+const PASS="1234";
+
+if(localStorage.getItem("login")==="1"){
+  showApp();
+}
+
+function login(){
+  if(user.value===USER && pass.value===PASS){
+    localStorage.setItem("login","1");
+    showApp();
+  }else{
+    alert("خطأ في الرقم أو كلمة السر");
+  }
+}
+
+function logout(){
+  localStorage.removeItem("login");
+  location.reload();
+}
+
+function showApp(){
+  loginBox.classList.add("hidden");
+  app.classList.remove("hidden");
+}
+
+/* 💾 ملخصات */
+let data=JSON.parse(localStorage.getItem("sum"))||[];
+function save(){localStorage.setItem("sum",JSON.stringify(data));}
+
+function add(){
+  if(!subject.value||!title.value||!content.value) return;
+  data.unshift({s:subject.value,t:title.value,c:content.value});
+  save();subject.value=title.value=content.value="";
+  draw();
+}
+
+function del(i){data.splice(i,1);save();draw();}
+
+function draw(){
+  list.innerHTML="";
+  data.forEach((x,i)=>{
+    list.innerHTML+=`
+    <div class="card">
+      <b>${x.s}</b>
+      <h4>${x.t}</h4>
+      <p>${x.c}</p>
+      <button onclick="del(${i})">حذف</button>
+    </div>`;
+  });
+}
+draw();
+</script>
+
+</body>
+</html>
