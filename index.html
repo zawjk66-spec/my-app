@@ -2,11 +2,10 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Study Way</title>
 
-<!-- PWA -->
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2196f3">
 
 <style>
 :root{
@@ -37,11 +36,9 @@ body{
   padding:20px;
 }
 
-/* ❄️ ثلج نازل */
 .snow{
   position:fixed;
   top:-10px;
-  color:white;
   font-size:14px;
   animation: fall linear infinite;
 }
@@ -49,21 +46,10 @@ body{
   to{transform:translateY(100vh);}
 }
 
-/* العنوان */
-.app-title{
-  text-align:center;
-}
-.app-title h1{
-  font-size:36px;
-  color:#4fc3f7;
-}
-.app-title a{
-  color:#90caf9;
-  font-size:14px;
-  text-decoration:none;
-}
+.app-title{text-align:center;}
+.app-title h1{font-size:36px;color:#4fc3f7;}
+.app-title a{color:#90caf9;font-size:14px;text-decoration:none;}
 
-/* زر ليلي */
 .toggle{
   margin:10px auto;
   display:block;
@@ -75,7 +61,6 @@ body{
   cursor:pointer;
 }
 
-/* الإدخالات */
 input, textarea{
   width:100%;
   padding:10px;
@@ -84,6 +69,7 @@ input, textarea{
   border:1px solid #ccc;
   font-size:14px;
 }
+
 textarea{min-height:100px;}
 
 button.save{
@@ -112,8 +98,6 @@ button.save{
   border-radius:6px;
   margin-top:6px;
 }
-
-hr{border:1px solid #ccc;margin:20px 0;}
 </style>
 </head>
 
@@ -128,97 +112,84 @@ hr{border:1px solid #ccc;margin:20px 0;}
     </a>
   </div>
 
-  <button class="toggle" onclick="iceBurst(event);toggleTheme()">🌙 / ☀️</button>
+  <button class="toggle" onclick="ice(event);toggleTheme()">🌙 / ☀️</button>
 
   <div class="card">
     <h3>✍️ إضافة ملخص</h3>
     <input id="subject" placeholder="المادة">
-    <input id="title" placeholder="عنوان الملخص">
+    <input id="title" placeholder="العنوان">
     <textarea id="content" placeholder="اكتب الملخص"></textarea>
-    <button class="save" onclick="iceBurst(event);addSummary()">حفظ</button>
+    <button class="save" onclick="ice(event);add()">حفظ</button>
   </div>
 
-  <hr>
-
-  <input id="search" placeholder="بحث" oninput="render()">
   <div id="list"></div>
 </div>
 
 <script>
-/* ❄️ ثلج نازل */
-for(let i=0;i<30;i++){
+// ❄️ ثلج نازل
+for(let i=0;i<25;i++){
   let s=document.createElement("div");
-  s.innerHTML="❄️";
   s.className="snow";
+  s.innerHTML="❄️";
   s.style.left=Math.random()*100+"vw";
-  s.style.animationDuration=3+Math.random()*6+"s";
-  s.style.opacity=Math.random();
+  s.style.animationDuration=3+Math.random()*5+"s";
   document.body.appendChild(s);
 }
 
-/* ❄️ انفجار جليد */
-function iceBurst(e){
-  for(let i=0;i<20;i++){
-    const ice=document.createElement("span");
-    ice.innerHTML="❄️";
-    ice.style.position="fixed";
-    ice.style.left=e.clientX+"px";
-    ice.style.top=e.clientY+"px";
-    ice.style.pointerEvents="none";
-    ice.style.transition="0.9s";
-    document.body.appendChild(ice);
-
-    const x=(Math.random()-0.5)*200;
-    const y=(Math.random()-1)*200;
-
+// ❄️ تطاير ثلج
+function ice(e){
+  for(let i=0;i<14;i++){
+    let x=document.createElement("span");
+    x.innerHTML="❄️";
+    x.style.position="fixed";
+    x.style.left=e.clientX+"px";
+    x.style.top=e.clientY+"px";
+    x.style.transition="0.8s";
+    document.body.appendChild(x);
     setTimeout(()=>{
-      ice.style.transform=`translate(${x}px,${y}px)`;
-      ice.style.opacity=0;
+      x.style.transform=`translate(${(Math.random()-0.5)*160}px,${-Math.random()*160}px)`;
+      x.style.opacity=0;
     },10);
-
-    setTimeout(()=>ice.remove(),900);
+    setTimeout(()=>x.remove(),800);
   }
 }
 
-/* ليلي */
+// 🌙 ليلي
 function toggleTheme(){
   document.body.classList.toggle("light");
 }
 
-/* ملخصات */
-let summaries = JSON.parse(localStorage.getItem("summaries")) || [];
-function save(){localStorage.setItem("summaries",JSON.stringify(summaries));}
+// 💾 ملخصات
+let data=JSON.parse(localStorage.getItem("sum"))||[];
+function save(){localStorage.setItem("sum",JSON.stringify(data));}
 
-function addSummary(){
-  let s=subject.value.trim(),
-      t=title.value.trim(),
-      c=content.value.trim();
-  if(!s||!t||!c) return alert("عمر الكل");
-  summaries.unshift({s,t,c});
-  save(); subject.value=title.value=content.value="";
-  render();
+function add(){
+  if(!subject.value||!title.value||!content.value) return alert("كمل الكل");
+  data.unshift({s:subject.value,t:title.value,c:content.value});
+  save();subject.value=title.value=content.value="";
+  draw();
 }
 
-function removeSummary(i){
-  summaries.splice(i,1); save(); render();
-}
+function del(i){data.splice(i,1);save();draw();}
 
-function render(){
+function draw(){
   list.innerHTML="";
-  let q=search.value.toLowerCase();
-  summaries.forEach((x,i)=>{
-    if(x.s.toLowerCase().includes(q)||x.t.toLowerCase().includes(q)){
-      list.innerHTML+=`
-      <div class="card">
-        <b>${x.s}</b>
-        <h4>${x.t}</h4>
-        <p>${x.c}</p>
-        <button class="delete" onclick="iceBurst(event);removeSummary(${i})">حذف</button>
-      </div>`;
-    }
+  data.forEach((x,i)=>{
+    list.innerHTML+=`
+    <div class="card">
+      <b>${x.s}</b>
+      <h4>${x.t}</h4>
+      <p>${x.c}</p>
+      <button class="delete" onclick="ice(event);del(${i})">حذف</button>
+    </div>`;
   });
 }
-render();
+draw();
+
+// ⚙️ Service Worker
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js");
+}
 </script>
 
 </body>
