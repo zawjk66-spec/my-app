@@ -101,7 +101,7 @@ button.save{
   margin-top:6px;
 }
 
-/* 🔐 تسجيل الدخول */
+/* 🔐 LOGIN */
 .login{
   background:var(--card);
   padding:20px;
@@ -125,9 +125,9 @@ button.save{
 
 <body>
 
-<!-- 🔐 LOGIN -->
+<!-- 🔐 LOGIN (إجباري) -->
 <div id="loginBox" class="login">
-  <h3>🔐 تسجيل الدخول</h3>
+  <h3>🔐 تسجيل الدخول (إجباري)</h3>
   <input id="user" placeholder="رقم المستخدم">
   <input id="pass" type="password" placeholder="كلمة السر">
   <button onclick="login()">دخول / تسجيل</button>
@@ -217,7 +217,9 @@ function draw(){
 }
 draw();
 
-// 🔐 LOGIN SYSTEM
+// 🔐 LOGIN SYSTEM (إجباري)
+localStorage.removeItem("logged"); // يمنع الدخول التلقائي
+
 let acc = JSON.parse(localStorage.getItem("acc"));
 
 function login(){
@@ -230,20 +232,12 @@ function login(){
     if(user.value!==acc.u||pass.value!==acc.p)
       return alert("خطأ في البيانات");
   }
-  localStorage.setItem("logged","1");
   showApp();
 }
 
 function showApp(){
   loginBox.classList.add("hide");
   app.classList.remove("hide");
-}
-
-if(localStorage.getItem("logged")==="1") showApp();
-
-// ⚙️ Service Worker
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("sw.js");
 }
 </script>
 
