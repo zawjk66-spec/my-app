@@ -36,6 +36,8 @@ body{
   padding:20px;
 }
 
+.hide{display:none;}
+
 .snow{
   position:fixed;
   top:-10px;
@@ -98,12 +100,41 @@ button.save{
   border-radius:6px;
   margin-top:6px;
 }
+
+/* 🔐 تسجيل الدخول */
+.login{
+  background:var(--card);
+  padding:20px;
+  border-radius:12px;
+  margin:40px auto;
+  max-width:360px;
+  text-align:center;
+}
+.login h3{margin-top:0;}
+.login button{
+  background:var(--btn);
+  color:white;
+  border:none;
+  padding:8px 16px;
+  border-radius:8px;
+  cursor:pointer;
+  margin-top:10px;
+}
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<!-- 🔐 LOGIN -->
+<div id="loginBox" class="login">
+  <h3>🔐 تسجيل الدخول</h3>
+  <input id="user" placeholder="رقم المستخدم">
+  <input id="pass" type="password" placeholder="كلمة السر">
+  <button onclick="login()">دخول / تسجيل</button>
+</div>
+
+<!-- 📘 APP -->
+<div class="container hide" id="app">
 
   <div class="app-title">
     <h1>Study Way</h1>
@@ -126,7 +157,7 @@ button.save{
 </div>
 
 <script>
-// ❄️ ثلج نازل
+// ❄️ ثلج
 for(let i=0;i<25;i++){
   let s=document.createElement("div");
   s.className="snow";
@@ -136,7 +167,7 @@ for(let i=0;i<25;i++){
   document.body.appendChild(s);
 }
 
-// ❄️ تطاير ثلج
+// ❄️ تطاير
 function ice(e){
   for(let i=0;i<14;i++){
     let x=document.createElement("span");
@@ -154,7 +185,7 @@ function ice(e){
   }
 }
 
-// 🌙 ليلي
+// 🌙 ثيم
 function toggleTheme(){
   document.body.classList.toggle("light");
 }
@@ -185,6 +216,30 @@ function draw(){
   });
 }
 draw();
+
+// 🔐 LOGIN SYSTEM
+let acc = JSON.parse(localStorage.getItem("acc"));
+
+function login(){
+  if(!user.value||!pass.value) return alert("عمر الخانات");
+  if(!acc){
+    acc={u:user.value,p:pass.value};
+    localStorage.setItem("acc",JSON.stringify(acc));
+    alert("تم التسجيل ✔️");
+  }else{
+    if(user.value!==acc.u||pass.value!==acc.p)
+      return alert("خطأ في البيانات");
+  }
+  localStorage.setItem("logged","1");
+  showApp();
+}
+
+function showApp(){
+  loginBox.classList.add("hide");
+  app.classList.remove("hide");
+}
+
+if(localStorage.getItem("logged")==="1") showApp();
 
 // ⚙️ Service Worker
 if("serviceWorker" in navigator){
