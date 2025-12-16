@@ -1,4 +1,4 @@
->
+<!DOCTYPE html>
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
@@ -10,4 +10,236 @@
 <style>
 :root{
   --bg:#0d1b2a;
-  -
+  --card:#1b263b;
+  --text:#ffffff;
+  --btn:#2196f3;
+}
+.light{
+  --bg:#f5f9ff;
+  --card:#ffffff;
+  --text:#000;
+  --btn:#1e88e5;
+}
+
+body{
+  margin:0;
+  font-family:Arial;
+  background:var(--bg);
+  color:var(--text);
+  direction:rtl;
+  transition:0.3s;
+}
+
+.container{
+  max-width:420px;
+  margin:auto;
+  padding:20px;
+}
+
+.hide{display:none;}
+
+.snow{
+  position:fixed;
+  top:-10px;
+  font-size:14px;
+  animation: fall linear infinite;
+}
+@keyframes fall{
+  to{transform:translateY(100vh);}
+}
+
+.app-title{text-align:center;}
+.app-title h1{font-size:36px;color:#4fc3f7;}
+.app-title a{color:#90caf9;font-size:14px;text-decoration:none;}
+
+.toggle{
+  margin:10px auto;
+  display:block;
+  background:#0bbcd6;
+  color:white;
+  border:none;
+  padding:8px 14px;
+  border-radius:20px;
+  cursor:pointer;
+}
+
+input, textarea{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:14px;
+}
+
+textarea{min-height:100px;}
+
+button.save{
+  background:var(--btn);
+  color:white;
+  border:none;
+  padding:8px;
+  width:120px;
+  border-radius:8px;
+  margin-top:12px;
+  cursor:pointer;
+}
+
+.card{
+  background:var(--card);
+  padding:15px;
+  border-radius:12px;
+  margin-top:15px;
+}
+
+.delete{
+  background:#e53935;
+  color:white;
+  border:none;
+  padding:6px;
+  border-radius:6px;
+  margin-top:6px;
+}
+
+/* 🔐 LOGIN */
+.login{
+  background:var(--card);
+  padding:20px;
+  border-radius:12px;
+  margin:40px auto;
+  max-width:360px;
+  text-align:center;
+}
+.login h3{margin-top:0;}
+.login button{
+  background:var(--btn);
+  color:white;
+  border:none;
+  padding:8px 16px;
+  border-radius:8px;
+  cursor:pointer;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🔐 LOGIN (إجباري) -->
+<div id="loginBox" class="login">
+  <h3>🔐 تسجيل الدخول (إجباري)</h3>
+  <input id="user" placeholder="رقم المستخدم">
+  <input id="pass" type="password" placeholder="كلمة السر">
+  <button onclick="login()">دخول / تسجيل</button>
+</div>
+
+<!-- 📘 APP -->
+<div class="container hide" id="app">
+
+  <div class="app-title">
+    <h1>Study Way</h1>
+    <a href="https://sites.google.com/view/studywayschool" target="_blank">
+      sites.google.com/view/studywayschool
+    </a>
+  </div>
+
+  <button class="toggle" onclick="ice(event);toggleTheme()">🌙 / ☀️</button>
+
+  <div class="card">
+    <h3>✍️ إضافة ملخص</h3>
+    <input id="subject" placeholder="المادة">
+    <input id="title" placeholder="العنوان">
+    <textarea id="content" placeholder="اكتب الملخص"></textarea>
+    <button class="save" onclick="ice(event);add()">حفظ</button>
+  </div>
+
+  <div id="list"></div>
+</div>
+
+<script>
+// ❄️ ثلج
+for(let i=0;i<25;i++){
+  let s=document.createElement("div");
+  s.className="snow";
+  s.innerHTML="❄️";
+  s.style.left=Math.random()*100+"vw";
+  s.style.animationDuration=3+Math.random()*5+"s";
+  document.body.appendChild(s);
+}
+
+// ❄️ تطاير
+function ice(e){
+  for(let i=0;i<14;i++){
+    let x=document.createElement("span");
+    x.innerHTML="❄️";
+    x.style.position="fixed";
+    x.style.left=e.clientX+"px";
+    x.style.top=e.clientY+"px";
+    x.style.transition="0.8s";
+    document.body.appendChild(x);
+    setTimeout(()=>{
+      x.style.transform=`translate(${(Math.random()-0.5)*160}px,${-Math.random()*160}px)`;
+      x.style.opacity=0;
+    },10);
+    setTimeout(()=>x.remove(),800);
+  }
+}
+
+// 🌙 ثيم
+function toggleTheme(){
+  document.body.classList.toggle("light");
+}
+
+// 💾 ملخصات
+let data=JSON.parse(localStorage.getItem("sum"))||[];
+function save(){localStorage.setItem("sum",JSON.stringify(data));}
+
+function add(){
+  if(!subject.value||!title.value||!content.value) return alert("كمل الكل");
+  data.unshift({s:subject.value,t:title.value,c:content.value});
+  save();subject.value=title.value=content.value="";
+  draw();
+}
+
+function del(i){data.splice(i,1);save();draw();}
+
+function draw(){
+  list.innerHTML="";
+  data.forEach((x,i)=>{
+    list.innerHTML+=`
+    <div class="card">
+      <b>${x.s}</b>
+      <h4>${x.t}</h4>
+      <p>${x.c}</p>
+      <button class="delete" onclick="ice(event);del(${i})">حذف</button>
+    </div>`;
+  });
+}
+draw();
+
+// 🔐 LOGIN SYSTEM (إجباري)
+localStorage.removeItem("logged"); // يمنع الدخول التلقائي
+
+let acc = JSON.parse(localStorage.getItem("acc"));
+
+function login(){
+  if(!user.value||!pass.value) return alert("عمر الخانات");
+  if(!acc){
+    acc={u:user.value,p:pass.value};
+    localStorage.setItem("acc",JSON.stringify(acc));
+    alert("تم التسجيل ✔️");
+  }else{
+    if(user.value!==acc.u||pass.value!==acc.p)
+      return alert("خطأ في البيانات");
+  }
+  showApp();
+}
+
+function showApp(){
+  loginBox.classList.add("hide");
+  app.classList.remove("hide");
+}
+</script>
+
+</body>
+</html>
