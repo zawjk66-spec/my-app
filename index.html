@@ -10,41 +10,62 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #0d1b2a;
-      color: white;
+      background: linear-gradient(135deg, #1a1a1a, #000);
+      color: #ffd700;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
     }
+
     .box {
-      background: #1b263b;
-      padding: 20px;
-      border-radius: 10px;
+      background: #111;
+      padding: 22px;
+      border-radius: 12px;
       width: 100%;
-      max-width: 300px;
+      max-width: 320px;
       text-align: center;
+      border: 2px solid #ffd700;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
     }
+
+    h2 {
+      margin-bottom: 15px;
+      color: #ffd700;
+    }
+
     input {
       width: 100%;
-      padding: 10px;
+      padding: 11px;
       margin: 8px 0;
-      border-radius: 5px;
-      border: none;
+      border-radius: 6px;
+      border: 1px solid #ffd700;
+      background: #000;
+      color: #ffd700;
+      outline: none;
     }
+
+    input::placeholder {
+      color: #c9b037;
+    }
+
     button {
       width: 100%;
-      padding: 10px;
-      background: #415a77;
-      color: white;
+      padding: 11px;
+      background: linear-gradient(135deg, #ffd700, #c9a300);
+      color: #000;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       font-size: 16px;
+      font-weight: bold;
+      margin-top: 10px;
     }
+
     button:hover {
-      background: #778da9;
+      opacity: 0.9;
     }
+
     .hidden {
       display: none;
     }
@@ -54,48 +75,10 @@
 
   <!-- تسجيل الدخول -->
   <div class="box" id="loginBox">
-    <h2>تسجيل الدخول</h2>
+    <h2>✨ تسجيل الدخول ✨</h2>
     <input type="text" id="username" placeholder="اسم المستخدم">
     <input type="password" id="password" placeholder="كلمة المرور">
     <button onclick="login()">دخول</button>
   </div>
 
   <!-- الصفحة الرئيسية -->
-  <div class="box hidden" id="homeBox">
-    <h2>مرحبا بك 👋</h2>
-    <p>تم تسجيل الدخول بنجاح</p>
-    <button onclick="logout()">تسجيل الخروج</button>
-  </div>
-
-  <script>
-    // إذا كان مسجل من قبل
-    if (localStorage.getItem("loggedIn") === "yes") {
-      showHome();
-    }
-
-    function login() {
-      const user = document.getElementById("username").value;
-      const pass = document.getElementById("password").value;
-
-      if (user === "" || pass === "") {
-        alert("عمر الحقول");
-        return;
-      }
-
-      localStorage.setItem("loggedIn", "yes");
-      showHome();
-    }
-
-    function logout() {
-      localStorage.removeItem("loggedIn");
-      location.reload();
-    }
-
-    function showHome() {
-      document.getElementById("loginBox").classList.add("hidden");
-      document.getElementById("homeBox").classList.remove("hidden");
-    }
-  </script>
-
-</body>
-</html>
