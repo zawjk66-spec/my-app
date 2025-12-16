@@ -1,41 +1,202 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <title>Study Way</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(120deg, #ffffff, #e6f0ff);
-      text-align: center;
-    }
-    h1 {
-      margin-top: 80px;
-      font-size: 36px;
-      color: #1e40af;
-      animation: glow 2s infinite alternate;
-    }
-    a {
-      display: inline-block;
-      margin-top: 30px;
-      padding: 12px 25px;
-      background: #1e40af;
-      color: white;
-      text-decoration: none;
-      border-radius: 10px;
-      font-size: 18px;
-    }
-    @keyframes glow {
-      from { text-shadow: 0 0 5px gold; }
-      to { text-shadow: 0 0 20px gold; }
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Study Way</title>
+
+<style>
+:root{
+  --bg:#0d1b2a;
+  --card:#1b263b;
+  --text:#ffffff;
+  --btn:#2196f3;
+}
+.light{
+  --bg:#f5f9ff;
+  --card:#ffffff;
+  --text:#000;
+  --btn:#1e88e5;
+}
+
+body{
+  margin:0;
+  font-family:Arial;
+  background:var(--bg);
+  color:var(--text);
+  direction:rtl;
+  transition:0.3s;
+}
+
+.container{
+  max-width:420px;
+  margin:auto;
+  padding:20px;
+}
+
+/* ===== ثلج ===== */
+.snow{
+  position:fixed;
+  top:-10px;
+  color:white;
+  font-size:14px;
+  animation: fall linear infinite;
+}
+@keyframes fall{
+  to{transform:translateY(100vh);}
+}
+
+/* ===== العنوان ===== */
+.app-title{
+  text-align:center;
+}
+.app-title h1{
+  font-size:36px;
+  color:#4fc3f7;
+}
+.app-title a{
+  color:#90caf9;
+  font-size:14px;
+  text-decoration:none;
+}
+
+/* زر ليلي */
+.toggle{
+  margin:10px auto;
+  display:block;
+  background:#0bbcd6;
+  color:white;
+  border:none;
+  padding:8px 14px;
+  border-radius:20px;
+  cursor:pointer;
+}
+
+/* ===== الإدخالات ===== */
+input, textarea{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:14px;
+}
+
+textarea{min-height:100px;}
+
+button.save{
+  background:var(--btn);
+  color:white;
+  border:none;
+  padding:8px;
+  width:120px;
+  border-radius:8px;
+  margin-top:12px;
+  cursor:pointer;
+}
+
+.card{
+  background:var(--card);
+  padding:15px;
+  border-radius:12px;
+  margin-top:15px;
+}
+
+.delete{
+  background:#e53935;
+  color:white;
+  border:none;
+  padding:6px;
+  border-radius:6px;
+  margin-top:6px;
+}
+
+hr{border:1px solid #ccc;margin:20px 0;}
+</style>
 </head>
+
 <body>
 
-  <h1>Study Way</h1>
-  <a href="https://sites.google.com/view/studywayschool">الدخول إلى الموقع</a>
+<div class="container">
+
+  <!-- العنوان -->
+  <div class="app-title">
+    <h1>Study Way</h1>
+    <a href="https://sites.google.com/view/studywayschool" target="_blank">
+      sites.google.com/view/studywayschool
+    </a>
+  </div>
+
+  <button class="toggle" onclick="toggleTheme()">🌙 / ☀️</button>
+
+  <!-- إضافة ملخص -->
+  <div class="card">
+    <h3>✍️ إضافة ملخص</h3>
+    <input id="subject" placeholder="المادة">
+    <input id="title" placeholder="عنوان الملخص">
+    <textarea id="content" placeholder="اكتب الملخص"></textarea>
+    <button class="save" onclick="addSummary()">حفظ</button>
+  </div>
+
+  <hr>
+
+  <input id="search" placeholder="بحث" oninput="render()">
+
+  <div id="list"></div>
+</div>
+
+<script>
+/* ===== الثلج ===== */
+for(let i=0;i<25;i++){
+  let s=document.createElement("div");
+  s.innerHTML="❄️";
+  s.className="snow";
+  s.style.left=Math.random()*100+"vw";
+  s.style.animationDuration=3+Math.random()*5+"s";
+  s.style.opacity=Math.random();
+  document.body.appendChild(s);
+}
+
+/* ===== ليلي ===== */
+function toggleTheme(){
+  document.body.classList.toggle("light");
+}
+
+/* ===== ملخصات ===== */
+let summaries = JSON.parse(localStorage.getItem("summaries")) || [];
+
+function save(){localStorage.setItem("summaries",JSON.stringify(summaries));}
+
+function addSummary(){
+  let s=subject.value.trim(),
+      t=title.value.trim(),
+      c=content.value.trim();
+  if(!s||!t||!c) return alert("عمر الكل");
+  summaries.unshift({s,t,c});
+  save(); subject.value=title.value=content.value="";
+  render();
+}
+
+function removeSummary(i){
+  summaries.splice(i,1); save(); render();
+}
+
+function render(){
+  list.innerHTML="";
+  let q=search.value.toLowerCase();
+  summaries.forEach((x,i)=>{
+    if(x.s.toLowerCase().includes(q)||x.t.toLowerCase().includes(q)){
+      list.innerHTML+=`
+      <div class="card">
+        <b>${x.s}</b>
+        <h4>${x.t}</h4>
+        <p>${x.c}</p>
+        <button class="delete" onclick="removeSummary(${i})">حذف</button>
+      </div>`;
+    }
+  });
+}
+render();
+</script>
 
 </body>
-</html>
+  </html>
