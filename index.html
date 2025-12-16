@@ -118,7 +118,6 @@ hr{border:1px solid #ccc;margin:20px 0;}
 
 <div class="container">
 
-  <!-- العنوان -->
   <div class="app-title">
     <h1>Study Way</h1>
     <a href="https://sites.google.com/view/studywayschool" target="_blank">
@@ -126,26 +125,24 @@ hr{border:1px solid #ccc;margin:20px 0;}
     </a>
   </div>
 
-  <button class="toggle" onclick="toggleTheme()">🌙 / ☀️</button>
+  <button class="toggle" onclick="iceBurst(event); toggleTheme()">🌙 / ☀️</button>
 
-  <!-- إضافة ملخص -->
   <div class="card">
     <h3>✍️ إضافة ملخص</h3>
     <input id="subject" placeholder="المادة">
     <input id="title" placeholder="عنوان الملخص">
     <textarea id="content" placeholder="اكتب الملخص"></textarea>
-    <button class="save" onclick="addSummary()">حفظ</button>
+    <button class="save" onclick="iceBurst(event); addSummary()">حفظ</button>
   </div>
 
   <hr>
 
   <input id="search" placeholder="بحث" oninput="render()">
-
   <div id="list"></div>
 </div>
 
 <script>
-/* ===== الثلج ===== */
+/* ===== ثلج نازل ===== */
 for(let i=0;i<25;i++){
   let s=document.createElement("div");
   s.innerHTML="❄️";
@@ -156,6 +153,31 @@ for(let i=0;i<25;i++){
   document.body.appendChild(s);
 }
 
+/* ===== تطاير الجليد عند الضغط ===== */
+function iceBurst(e){
+  for(let i=0;i<16;i++){
+    const ice=document.createElement("span");
+    ice.innerHTML="❄️";
+    ice.style.position="fixed";
+    ice.style.left=e.clientX+"px";
+    ice.style.top=e.clientY+"px";
+    ice.style.pointerEvents="none";
+    ice.style.fontSize="14px";
+    ice.style.transition="0.8s";
+    document.body.appendChild(ice);
+
+    const x=(Math.random()-0.5)*160;
+    const y=(Math.random()-1)*160;
+
+    setTimeout(()=>{
+      ice.style.transform=`translate(${x}px,${y}px)`;
+      ice.style.opacity=0;
+    },10);
+
+    setTimeout(()=>ice.remove(),800);
+  }
+}
+
 /* ===== ليلي ===== */
 function toggleTheme(){
   document.body.classList.toggle("light");
@@ -163,7 +185,6 @@ function toggleTheme(){
 
 /* ===== ملخصات ===== */
 let summaries = JSON.parse(localStorage.getItem("summaries")) || [];
-
 function save(){localStorage.setItem("summaries",JSON.stringify(summaries));}
 
 function addSummary(){
@@ -190,7 +211,7 @@ function render(){
         <b>${x.s}</b>
         <h4>${x.t}</h4>
         <p>${x.c}</p>
-        <button class="delete" onclick="removeSummary(${i})">حذف</button>
+        <button class="delete" onclick="iceBurst(event); removeSummary(${i})">حذف</button>
       </div>`;
     }
   });
@@ -199,4 +220,4 @@ render();
 </script>
 
 </body>
-  </html>
+</html>
