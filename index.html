@@ -2,82 +2,40 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>دردشة خاصة</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Study Way</title>
   <style>
     body {
-      font-family: Arial;
-      background: #f2f2f2;
       margin: 0;
-      padding: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(120deg, #ffffff, #e6f0ff);
+      text-align: center;
     }
-    .chat {
-      max-width: 400px;
-      margin: 20px auto;
-      background: white;
-      border-radius: 10px;
-      padding: 10px;
+    h1 {
+      margin-top: 80px;
+      font-size: 36px;
+      color: #1e40af;
+      animation: glow 2s infinite alternate;
     }
-    #messages {
-      height: 300px;
-      overflow-y: auto;
-      border: 1px solid #ddd;
-      padding: 5px;
-      margin-bottom: 10px;
-    }
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-    }
-    button {
-      background: #4CAF50;
+    a {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 12px 25px;
+      background: #1e40af;
       color: white;
-      border: none;
-      border-radius: 5px;
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 18px;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 5px gold; }
+      to { text-shadow: 0 0 20px gold; }
     }
   </style>
 </head>
 <body>
 
-<div class="chat">
-  <h3>💬 دردشة خاصة</h3>
-  <input id="name" placeholder="اسمك">
-  <div id="messages"></div>
-  <input id="msg" placeholder="اكتب رسالة">
-  <button onclick="send()">إرسال</button>
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
-<script>
-  var firebaseConfig = {
-    apiKey: "AIzaSyExample",
-    authDomain: "example.firebaseapp.com",
-    databaseURL: "https://example.firebaseio.com",
-    projectId: "example",
-  };
-  firebase.initializeApp(firebaseConfig);
-
-  var db = firebase.database().ref("chat");
-
-  function send() {
-    var name = document.getElementById("name").value;
-    var msg = document.getElementById("msg").value;
-    if(name && msg){
-      db.push({name, msg});
-      document.getElementById("msg").value = "";
-    }
-  }
-
-  db.on("child_added", function(data){
-    var m = data.val();
-    var div = document.createElement("div");
-    div.textContent = m.name + ": " + m.msg;
-    document.getElementById("messages").appendChild(div);
-  });
-</script>
+  <h1>Study Way</h1>
+  <a href="https://sites.google.com/view/studywayschool">الدخول إلى الموقع</a>
 
 </body>
 </html>
