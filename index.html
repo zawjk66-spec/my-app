@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>Study Way 2</title>
+
+<style>
+:root{
+  --bg:#0b1f33;
+  --card:#ffffff;
+  --main:#0a58ca;
+  --text:#ffffff;
+}
+
+body{
+  margin:0;
+  font-family:Arial;
+  background:var(--bg);
+  color:var(--text);
+  overflow:hidden;
+}
+
+.header{
+  background:var(--main);
+  padding:15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-weight:bold;
+}
+
+/* ساعة حديثة */
+.clock{
+  text-align:center;
+  font-size:28px;
+  font-weight:bold;
+  margin:15px 0;
+  letter-spacing:2px;
+}
+
+.subclock{
+  font-size:14px;
+  opacity:.8;
+}
+
+.container{
+  padding:15px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+
+.card{
+  background:var(--card);
+  color:#000;
+  border-radius:16px;
+  padding:30px 10px;
+  text-align:center;
+  box-shadow:0 6px 15px rgba(0,0,0,0.4);
+  cursor:pointer;
+  font-size:18px;
+}
+
+.page{
+  display:none;
+  padding:15px;
+}
+
+textarea,input,button{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+button{
+  background:var(--main);
+  color:white;
+  border:none;
+  cursor:pointer;
+}
+
+.item{
+  background:var(--card);
+  color:#000;
+  padding:10px;
+  margin-top:10px;
+  border-radius:10px;
+  position:relative;
+}
+
+.delete{
+  position:absolute;
+  top:5px;
+  left:5px;
+  background:#c0392b;
+  color:white;
+  border:none;
+  padding:4px 6px;
+  border-radius:6px;
+}
+
+/* معركة الفصل */
+.battle{
+  background:linear-gradient(135deg,#ff5722,#ff9800);
+  padding:20px;
+  border-radius:18px;
+  color:white;
+  text-align:center;
+  margin-top:15px;
+  box-shadow:0 0 20px rgba(0,0,0,.4);
+}
+
+.countdown{
+  font-size:22px;
+  font-weight:bold;
+  margin-top:10px;
+}
+
+/* المؤثرات */
+.effect{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+
+.particle{
+  position:absolute;
+  animation:fall linear infinite;
+}
+
+@keyframes fall{
+  from{transform:translateY(-20px);}
+  to{transform:translateY(110vh);}
+}
+
+/* نار احترافية */
+.flame{
+  width:10px;
+  height:26px;
+  background:radial-gradient(circle at 50% 80%,
+    #fff176 0%,
+    #ff9800 40%,
+    #ff5722 65%,
+    #b71c1c 100%);
+  border-radius:50% 50% 60% 60%;
+  box-shadow:0 0 30px rgba(255,80,0,.9);
+  animation:fall linear infinite, flicker .25s infinite alternate;
+}
+
+@keyframes flicker{
+  from{transform:scale(1);}
+  to{transform:scale(1.25);}
+}
+
+.snow{
+  color:white;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="effect" id="effect"></div>
+
+<div class="header">
+  <span onclick="home()">⬅️</span>
+  <span>📘 Study Way 2</span>
+  <span onclick="settings()">⚙️</span>
+</div>
+
+<!-- الساعة -->
+<div class="clock" id="clock">00:00:00
+  <div class="subclock" id="date"></div>
+</div>
+
+<!-- الرئيسية -->
+<div id="home" class="container">
+  <div class="card" onclick="openProgram()">💻 التخطيط</div>
+  <div class="card" onclick="openApp()">📱 التنفيذ</div>
+</div>
+
+<!-- معركة الفصل -->
+<div class="battle">
+  ⚔️ معركة الفصل <br>
+  تجهز للفصل مع أقوى برنامج للحصول على معدل ممتاز 💪
+  <div class="countdown" id="countdown"></div>
+</div>
+
+<!-- التخطيط -->
+<div id="program" class="page">
+  <h3>🧠 الخطط</h3>
+  <input id="planText" placeholder="✍️ اسم الخطة">
+  <input type="time" id="planTime">
+  <button onclick="addPlan()">➕ إضافة خطة</button>
+  <div id="plans"></div>
+</div>
+
+<!-- التنفيذ -->
+<div id="app" class="page">
+  <h3>✅ ما تم تطبيقه</h3>
+  <textarea id="doneText" placeholder="📌 ماذا أنجزت اليوم؟"></textarea>
+  <button onclick="addDone()">💾 تسجيل</button>
+  <div id="doneList"></div>
+</div>
+
+<!-- الإعدادات -->
+<div id="settings" class="page">
+  <h3>🎨 السمات</h3>
+  <button onclick="theme('fire')">🔥 ناري</button>
+  <button onclick="theme('ice')">❄️ ثلجي</button>
+  <button onclick="theme('gold')">🟨 ذهبي</button>
+  <button onclick="theme('green')">🟢 أخضر</button>
+</div>
+
+<script>
+const pages=["home","program","app","settings"];
+let currentTheme="";
+
+function show(id){
+  pages.forEach(p=>document.getElementById(p).style.display="none");
+  document.getElementById(id).style.display=id==="home"?"grid":"block";
+}
+function home(){show("home")}
+function openProgram(){show("program")}
+function openApp(){show("app")}
+function settings(){show("settings")}
+
+/* ساعة */
+function updateClock(){
+  const now=new Date();
+  clock.textContent=now.toLocaleTimeString();
+  date.textContent=now.toLocaleDateString("ar-DZ",
+    {weekday:"long",year:"numeric",month:"long",day:"numeric"});
+}
+setInterval(updateClock,1000);
+updateClock();
+
+/* عد تنازلي ل 7 جانفي القادم */
+function updateCountdown(){
+  const now=new Date();
+  let target=new Date(now.getFullYear(),0,7);
+  if(now>target) target=new Date(now.getFullYear()+1,0,7);
+
+  const diff=target-now;
+  const d=Math.floor(diff/86400000);
+  const h=Math.floor(diff%86400000/3600000);
+  const m=Math.floor(diff%3600000/60000);
+
+  countdown.textContent=`⏳ ${d} يوم ${h} ساعة ${m} دقيقة`;
+}
+setInterval(updateCountdown,1000);
+updateCountdown();
+
+/* خطط + منبه */
+function addPlan(){
+  if(!planText.value || !planTime.value) return;
+  const id=Date.now();
+  plans.innerHTML+=`
+    <div class="item" id="p${id}">
+      <button class="delete" onclick="this.parentElement.remove()">حذف</button>
+      📌 ${planText.value}<br>⏰ ${planTime.value}
+    </div>`;
+  setAlarm(planTime.value,planText.value);
+  planText.value=""; planTime.value="";
+}
+
+function setAlarm(time,text){
+  const now=new Date();
+  const [h,m]=time.split(":");
+  const alarm=new Date();
+  alarm.setHours(h,m,0,0);
+  if(alarm<now) alarm.setDate(alarm.getDate()+1);
+  setTimeout(()=>alert("⏰ حان وقت: "+text),alarm-now);
+}
+
+function addDone(){
+  if(!doneText.value) return;
+  doneList.innerHTML+=`
+    <div class="item">
+      <button class="delete" onclick="this.parentElement.remove()">حذف</button>
+      ${doneText.value}
+    </div>`;
+  doneText.value="";
+}
+
+/* السمات */
+function theme(t){
+  effect.innerHTML="";
+  currentTheme=t;
+  if(t==="fire"){set("#2b0b0b","#ff5722");fireRain();}
+  if(t==="ice"){set("#0b1f33","#1e88e5");snowRain();}
+  if(t==="gold"){set("#1c1c1c","#d4af37");}
+  if(t==="green"){set("#0f2f1f","#2ecc71");}
+}
+function set(bg,main){
+  document.documentElement.style.setProperty("--bg",bg);
+  document.documentElement.style.setProperty("--main",main);
+}
+function fireRain(){
+  for(let i=0;i<35;i++){
+    let f=document.createElement("div");
+    f.className="particle flame";
+    f.style.left=Math.random()*100+"%";
+    f.style.animationDuration=(2+Math.random()*2)+"s";
+    effect.appendChild(f);
+  }
+}
+function snowRain(){
+  for(let i=0;i<25;i++){
+    let s=document.createElement("div");
+    s.className="particle snow";
+    s.textContent="❄️";
+    s.style.left=Math.random()*100+"%";
+    s.style.animationDuration=(4+Math.random()*3)+"s";
+    effect.appendChild(s);
+  }
+}
+</script>
+
+</body>
+  </html>
