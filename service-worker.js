@@ -1,3 +1,19 @@
+
+// عند تثبيت السيرفس وركر الجديد، لا تنتظر إغلاق التبويبات القديمة
+self.addEventListener('install', (event) => {
+  self.skipWaiting(); 
+});
+
+// عند التنشيط، سيطر على جميع الصفحات المفتوحة فوراً
+self.addEventListener('activate', (event) => {
+  event.waitUntil(clients.claim());
+});
+
+
+
+
+
+
 self.addEventListener("install", e => {
   self.skipWaiting();
 });
